@@ -5,26 +5,26 @@ use rmcp::{ServiceExt, transport::stdio};
 use github::GitHubService;
 use tracing_subscriber::{self, EnvFilter};
 
-/// MCP GitHub CLI封装服务器
-/// 可以通过标准输入输出流与客户端通信
+/// MCP GitHub CLI Service Server
+/// Communicates with client through standard input/output streams
 #[tokio::main]
 async fn main() -> Result<()> {
-    // 初始化日志
+    // Initialize logging
     tracing_subscriber::fmt()
         .with_env_filter(EnvFilter::from_default_env().add_directive(tracing::Level::INFO.into()))
         .with_writer(std::io::stderr)
         .with_ansi(false)
         .init();
 
-    tracing::info!("启动MCP GitHub服务器...");
+    tracing::info!("Starting MCP GitHub server...");
 
-    // 创建GitHub服务实例
+    // Create GitHub service instance
     let service = GitHubService::new().serve(stdio()).await?;
 
-    // 等待服务停止
-    tracing::info!("服务已启动，等待请求...");
+    // Wait for service to stop
+    tracing::info!("Service started, waiting for requests...");
     service.waiting().await?;
     
-    tracing::info!("服务已停止");
+    tracing::info!("Service stopped");
     Ok(())
 }
